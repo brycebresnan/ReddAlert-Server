@@ -16,7 +16,7 @@ module.exports = class ApiCallTimer {
       activeScore: null,
       scoreThreshold:30,
       isHot: false,
-      id: v4()
+      id: null,
     }
   }
 
@@ -31,6 +31,7 @@ module.exports = class ApiCallTimer {
   }
 
   getAuthToken = () => {
+
     const encodedKey = btoa(`${process.env.REDDIT_APP_ID}:${process.env.REDDIT_APP_SECRET}`)
     
     fetch(`https://www.reddit.com/api/v1/access_token`, {
@@ -81,18 +82,36 @@ module.exports = class ApiCallTimer {
       newThreadObj.displayName = jsonifiedResponse.data.display_name;
       newThreadObj.subscribers = jsonifiedResponse.data.subscribers;
       newThreadObj.activeScore = calcActiveScore;
-      if (calcActiveScore >= newThread.scoreThreshold){
+      if (calcActiveScore >= threadObj.scoreThreshold){
         newThreadObj.isHot = true;
       }
-      const newMainThreadList = this.mainThreadList.concat(newThreadObj); 
+      const newMainThreadList = this.mainThreadList
+      .filter(thread => thread.id !== newThreadObj.id)
+      .concat(newThreadObj); 
       this.mainThreadList = newMainThreadList;
     })
     .catch((error) => {
       this.apiError = error.message
       newThreadObj.error = error.message
-      const newMainThreadList = this.mainThreadList.concat(newThreadObj); 
+      const newMainThreadList = this.mainThreadList
+      .filter(thread => thread.id !== newThreadObj.id)
+      .concat(newThreadObj);
       this.mainThreadList = newMainThreadList;
     });
   }
 
+  loopApiCall = () => {
+    if (this.mainThreadList.length == 0) {
+      return
+    }
+
+    const threadListClone = this.mainThreadList
+    threadListClone.forEach(thread => {
+      this.apiCall(thread);
+    });
+  }
+
+  run = () => {
+    this.getAuthToken()
+  }
 }
