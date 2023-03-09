@@ -1,7 +1,12 @@
+const ApiCallTimer = require('./js/ApiCallTimer.js');
+
 const express = require("express");
 const PORT = process.env.PORT || 3001;
 const path = require('path')
 const app = express();
+
+const Timer = new ApiCallTimer([],10000);
+Timer.getAuthToken()
 
 app.use(express.static(path.join(__dirname, '../../reddalert/build')))
 
