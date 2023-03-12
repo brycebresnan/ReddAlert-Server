@@ -30,11 +30,13 @@ module.exports = class ApiCallTimer {
   }
 
   stopTimer = () => {
-    if (this.intId != null) {
+    if (this.intId == null) {
       return "No Timer found."
+    } else {
+      clearInterval(this.intId)
+      this.intId = null;
+      return "Timer Stopped."
     }
-    clearInterval(this.intId)
-    return "Timer Stopped."
   }
 
   getAuthToken = () => {
