@@ -23,7 +23,7 @@ app.get("/api", (req, res) => {
 });
 
 app.post('/timer', (req, res, next) => {
-    Timer.mainThreadList = req.body.mainThreadList;
+    Timer.mainThreadList = req.body.threadList;
     console.log(Timer.mainThreadList);
     setTimeout(() => {Timer.loopApiCall()}, 500)
     setTimeout(() => {console.log(Timer.mainThreadList)}, 1000)
