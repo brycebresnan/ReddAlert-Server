@@ -2,9 +2,9 @@ require("dotenv").config()
 
 module.exports = class ApiCallTimer {
 
-  constructor(threadList, interval) {
-    this.mainThreadList = threadList;
-    this.interval = interval;
+  constructor() {
+    this.mainThreadList = [];
+    this.interval = 10000;
     this.token = null;
     this.intId = null;
     this.authError = null;
@@ -20,8 +20,8 @@ module.exports = class ApiCallTimer {
     }
   }
 
-  startTimer = (interval=600000) => {
-    intId = setInterval(apiCall, interval);
+  startTimer = () => {
+    this.intId = setInterval(this.loopApiCall, this.interval);
   }
 
   stopTimer = () => {
@@ -61,6 +61,7 @@ module.exports = class ApiCallTimer {
   }
 
   apiCall = (threadObj) => {
+    console.log("API Called!")
     let newThreadObj = threadObj;
 
     if (this.token == null) {
