@@ -1,46 +1,17 @@
-const ApiCallTimer = require('./js/ApiCallTimer.js');
-
 const express = require("express");
 const PORT = process.env.PORT || 3001;
 const path = require('path')
 const app = express();
+const cors = require('cors');
 
-let testThreadList = [
-  {
-    displayName: "cats",
-    accountsActive: null,
-    subscribers: null,
-    activeScore: null,
-    scoreThreshold:30,
-    isHot: false,
-    id: 1
-  },
-  {
-    displayName: "dogs",
-    accountsActive: null,
-    subscribers: null,
-    activeScore: null,
-    scoreThreshold:30,
-    isHot: false,
-    id: 2
-  },
-  {
-    displayName: "cringe",
-    accountsActive: null,
-    subscribers: null,
-    activeScore: null,
-    scoreThreshold:30,
-    isHot: false,
-    id: 3
-  }
-]
+const ApiCallTimer = require('./js/ApiCallTimer.js');
 
-const Timer = new ApiCallTimer(testThreadList,10000);
+app.use(cors());
+app.use(express.json())
+
+const Timer = new ApiCallTimer();
 Timer.run();
-setTimeout(() => {Timer.loopApiCall()}, 500)
-setTimeout(() => {console.log(Timer.mainThreadList)}, 1000)
-// Timer.getAuthToken()
-// Timer.apiCall(testThread)
+Timer.startTimer();
 
 app.use(express.static(path.join(__dirname, '../../reddalert/build')))
 
@@ -49,10 +20,16 @@ app.get('/', (req, res) => {
 });
 
 app.get("/api", (req, res) => {
-  res.json({message: "Hello from server!"});
+  res.json({message: "Connected to server."});
 });
 
-
+app.post('/timer', (req, res, next) => {
+    Timer.mainThreadList = req.body.mainThreadList;
+    console.log(Timer.mainThreadList);
+    setTimeout(() => {Timer.loopApiCall()}, 500)
+    setTimeout(() => {console.log(Timer.mainThreadList)}, 1000)
+    res.json({message: "Thread List Updated."});
+})
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}...`)
