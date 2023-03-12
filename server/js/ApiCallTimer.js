@@ -21,13 +21,20 @@ module.exports = class ApiCallTimer {
   }
 
   startTimer = () => {
-    this.intId = setInterval(this.loopApiCall, this.interval);
+    if (this.intId == null) {
+      this.intId = setInterval(this.loopApiCall, this.interval);
+      return "Timer has started."
+    } else {
+      return "Timer is already running."
+    }
   }
 
   stopTimer = () => {
-    if (intId != null) {
-
+    if (this.intId != null) {
+      return "No Timer found."
     }
+    clearInterval(this.intId)
+    return "Timer Stopped."
   }
 
   getAuthToken = () => {
@@ -112,7 +119,4 @@ module.exports = class ApiCallTimer {
     });
   }
 
-  run = () => {
-    this.getAuthToken()
-  }
 }

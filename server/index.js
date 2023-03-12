@@ -10,8 +10,7 @@ app.use(cors());
 app.use(express.json())
 
 const Timer = new ApiCallTimer();
-Timer.run();
-Timer.startTimer();
+Timer.getAuthToken();
 
 app.use(express.static(path.join(__dirname, '../../reddalert/build')))
 
@@ -30,6 +29,20 @@ app.post('/timer', (req, res, next) => {
     setTimeout(() => {console.log(Timer.mainThreadList)}, 1000)
     res.json({message: "Thread List Updated."});
 })
+
+app.get("/timer", (req, res) => {
+  let statusMessage = null;
+  let timerStatus = null;
+  if (Timer.intId == null) {
+    statusMessage = Timer.startTimer();
+    timerStatus = true
+  } else {
+    statusMessage = Timer.stopTimer();
+    timerStatus = false
+  }
+
+  res.json({message: `${statusMessage}`, timerStatus: `${timerStatus}`});
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}...`)
